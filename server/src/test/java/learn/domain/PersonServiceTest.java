@@ -38,6 +38,88 @@ class PersonServiceTest {
         assertEquals(expected, actual);
     }
 
+    @Test
+    void shouldNotAddNullPerson() {
+        Result<Person> actual = service.add(null);
+        assertEquals(ResultType.INVALID, actual.getType());
+    }
+
+    @Test
+    void shouldNotAddNullOrBlankFirstName() {
+        Person person = makePerson();
+        person.setFirstName("");
+        Result<Person> actual1 = service.add(person);
+        assertEquals(ResultType.INVALID, actual1.getType());
+
+        person.setFirstName(null);
+        Result<Person> actual2 = service.add(person);
+        assertEquals(ResultType.INVALID, actual2.getType());
+    }
+
+    @Test
+    void shouldNotAddNullOrBlankLastName() {
+        Person person = makePerson();
+        person.setLastName("");
+        Result<Person> actual1 = service.add(person);
+        assertEquals(ResultType.INVALID, actual1.getType());
+
+        person.setLastName(null);
+        Result<Person> actual2 = service.add(person);
+        assertEquals(ResultType.INVALID, actual2.getType());
+    }
+
+    @Test
+    void shouldNotAddNullOrBlankEmail() {
+        Person person = makePerson();
+        person.setEmail("");
+        Result<Person> actual1 = service.add(person);
+        assertEquals(ResultType.INVALID, actual1.getType());
+
+        person.setEmail(null);
+        Result<Person> actual2 = service.add(person);
+        assertEquals(ResultType.INVALID, actual2.getType());
+    }
+
+    @Test
+    void shouldNotAddNullOrBlankPhone() {
+        Person person = makePerson();
+        person.setPhone("");
+        Result<Person> actual1 = service.add(person);
+        assertEquals(ResultType.INVALID, actual1.getType());
+
+        person.setPhone(null);
+        Result<Person> actual2 = service.add(person);
+        assertEquals(ResultType.INVALID, actual2.getType());
+    }
+
+    @Test
+    void shouldNotAddDuplicateEmail() {
+        Person person = makePerson();
+        when(repository.findAll()).thenReturn(List.of(person));
+
+        Result<Person> actual = service.add(person);
+        assertEquals(ResultType.INVALID, actual.getType());
+    }
+
+    @Test
+    void shouldNotAddWhenPersonIdSet() {
+        Person person = makePerson();
+        person.setPersonId(999);
+
+        Result<Person> actual = service.add(person);
+        assertEquals(ResultType.INVALID, actual.getType());
+    }
+
+    @Test
+    void shouldAdd() {
+        Person person = makePerson();
+        when(repository.add(person)).thenReturn(person);
+
+        Result<Person> actual = service.add(person);
+        assertEquals(ResultType.SUCCESS, actual.getType());
+        assertEquals(person, actual.getPayload());
+    }
+
     private Person makePerson() {
         Person person = new Person();
         person.setFirstName("Bruce");

@@ -36,6 +36,29 @@ public class PersonService {
         return result;
     }
 
+    public Result<Person> update(Person person) {
+        Result<Person> result = validate(person);
+
+        if (result.getType() != ResultType.SUCCESS) {
+            return result;
+        }
+
+        if (person.getPersonId() <= 0) {
+            result.addMessage("personId must be set for 'update' operation", ResultType.INVALID);
+            return result;
+        }
+
+        if (!personRepository.update(person)) {
+            result.addMessage("Person ID: " + person.getPersonId() + " not found", ResultType.NOT_FOUND);
+        } else {
+            result.setPayload(person);
+        }
+
+        return result;
+    }
+
+    public boolean deleteById(int personId) { return personRepository.deleteById(personId); }
+
     private Result<Person> validate(Person person) {
         Result<Person> result = new Result<>();
 

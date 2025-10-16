@@ -120,6 +120,41 @@ class PersonServiceTest {
         assertEquals(person, actual.getPayload());
     }
 
+    @Test
+    void shouldNotUpdateWhenIdNegative() {
+        Person person = makePerson();
+        person.setPersonId(0);
+
+        Result<Person> actual = service.update(person);
+        assertEquals(ResultType.INVALID, actual.getType());
+    }
+
+    @Test
+    void shouldNotUpdateWhenNotFound() {
+        Person person = makePerson();
+        person.setPersonId(999);
+
+        Result<Person> actual = service.update(person);
+        assertEquals(ResultType.NOT_FOUND, actual.getType());
+    }
+
+    @Test
+    void shouldUpdate() {
+        Person person = makePerson();
+        person.setPersonId(1);
+
+        when(repository.update(person)).thenReturn(true);
+        Result<Person> actual = service.update(person);
+        assertEquals(person, actual.getPayload());
+        assertEquals(ResultType.SUCCESS, actual.getType());
+    }
+
+    @Test
+    void shouldDelete() {
+        when(repository.deleteById(1)).thenReturn(true);
+        assertTrue(service.deleteById(1));
+    }
+
     private Person makePerson() {
         Person person = new Person();
         person.setFirstName("Bruce");

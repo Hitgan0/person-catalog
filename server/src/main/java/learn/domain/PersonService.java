@@ -25,6 +25,14 @@ public class PersonService {
             return result;
         }
 
+        // Email cannot be duplicated
+        for (Person p: findAll()) {
+            if (p.getEmail().equals(person.getEmail())) {
+                result.addMessage("Email already exists (duplicate)", ResultType.INVALID);
+                return result;
+            }
+        }
+
         if (person.getPersonId() != 0) {
             result.addMessage("personId cannot be set for 'add' operation", ResultType.INVALID);
             return result;
@@ -86,13 +94,6 @@ public class PersonService {
         // Phone cannot be null or blank
         if (Validations.isNullOrBlank(person.getPhone())) {
             result.addMessage("Phone is required", ResultType.INVALID);
-        }
-
-        // Email cannot be duplicated
-        for (Person p: findAll()) {
-            if (p.getEmail().equals(person.getEmail())) {
-                result.addMessage("Email already exists (duplicate)", ResultType.INVALID);
-            }
         }
 
         return result;
